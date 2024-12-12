@@ -9,4 +9,9 @@ class DataLoader:
     def load_data(self) -> pd.DataFrame:
         self.df = pd.read_csv(self.filepath)
         return self.df
+    
+    @staticmethod
+    def split(df) -> tuple:
+        X, y = df['post'], df['female']
+        return X, y
 
