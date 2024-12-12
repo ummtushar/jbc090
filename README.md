@@ -1,8 +1,9 @@
-# Codebase for the research paper titled "Do automated de-biasing techniques like Scrubber combined with manual techniques like gender swapping in order to mitigate self-reported flairs in Reddit posts to improve NLP’s performance while ensuring protection of atttributes of users from adverserial attacks on privacy?" for the course JBC090- Language and AI
+# Codebase for the course: JBC090- Language and AI
+### *"Do automated de-biasing techniques like Scrubber combined with manual techniques like gender swapping in order to mitigate self-reported flairs in Reddit posts to improve NLP’s performance while ensuring protection of atttributes of users from adverserial attacks on privacy?"*
 
 ## Overview
 
-This project is designed to analyze and process text data, focusing on gender-related content. It includes functionalities for data loading, cleaning, and applying machine learning models to classify text based on gender. The project utilizes various libraries such as Pandas, Scikit-learn, and SpaCy for data manipulation and natural language processing.
+This project is designed to analyze and process text data, focusing on gender-related content. It includes functionalities for data loading, cleaning, and applying machine learning models to classify text based on gender. The project utilizes various libraries such as Pandas, Scikit-learn, gensim and SpaCy for data manipulation and natural language processing.
 
 ## Table of Contents
 
