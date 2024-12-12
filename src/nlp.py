@@ -20,12 +20,6 @@ class TfidfLogisticRegression:
         self.tfidf = TfidfVectorizer()
         self.model = LogisticRegression(n_jobs=-1)
 
-    def explain_instance(self, X_test_instance, filename):
-        c = make_pipeline(self.tfidf, self.model)
-        explainer = LimeTextExplainer(class_names=['male', 'female'])
-        exp = explainer.explain_instance(X_test_instance, c.predict_proba, num_features=5)
-        exp.save_to_file(filename)
-
     def run(self):
         X, y = DataLoader.split(self.data)
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
@@ -44,7 +38,6 @@ class TfidfLogisticRegression:
 
         y_train_pred = self.model.predict(X_train_tfidf)
         y_test_pred = self.model.predict(X_test_tfidf)
-
 
         print(precision_score(y_train, y_train_pred, average='binary'),
               recall_score(y_train, y_train_pred, average='binary'))
@@ -74,6 +67,14 @@ class TfidfLogisticRegression:
         plt.legend()
         plt.show()
 
+        # Example usage of explain_instance for the first test instance
+        X_test_instance = X_test.iloc[0]  # Change index as needed
+        filename = "lime_explanation.html" 
+        c = make_pipeline(self.tfidf, self.model)
+        explainer = LimeTextExplainer(class_names=['male', 'female'])
+        exp = explainer.explain_instance(X_test_instance, c.predict_proba, num_features=5)
+        exp.save_to_file(filename)
+
 
 class Word2VecTransformer(BaseEstimator, TransformerMixin):
     def __init__(self, model):
@@ -91,6 +92,7 @@ class Word2VecTransformer(BaseEstimator, TransformerMixin):
 
     def transform(self, X):
         return np.array([self.get_word2vec_embeddings(post) for post in X])
+    
 
 class Word2VecLogisticRegression:
     def __init__(self, data):
@@ -111,12 +113,6 @@ class Word2VecLogisticRegression:
         if len(embeddings) == 0:
             return np.zeros(self.word2vec_model.vector_size)
         return np.mean(embeddings, axis=0)
-
-    def explain_instance(self, X_test_instance, filename):
-        c_word2vec = make_pipeline(Word2VecTransformer(self.word2vec_model), self.lr_word2vec)
-        explainer_word2vec = LimeTextExplainer(class_names=['male', 'female'])
-        exp_word2vec = explainer_word2vec.explain_instance(X_test_instance, c_word2vec.predict_proba, num_features=5)
-        exp_word2vec.save_to_file(filename)
 
     def run(self):
         X, y = DataLoader.split(self.data)
@@ -158,3 +154,12 @@ class Word2VecLogisticRegression:
         plt.title('AUC Curve')
         plt.legend(loc='best')
         plt.show()
+
+        # Merged explain_instance logic
+        # Example usage of explain_instance for the first test instance
+        X_test_instance = X_test.iloc[0]  # Change index as needed
+        filename = "lime_explanation_word2vec.html"  
+        c_word2vec = make_pipeline(Word2VecTransformer(self.word2vec_model), self.lr_word2vec)
+        explainer_word2vec = LimeTextExplainer(class_names=['male', 'female'])
+        exp_word2vec = explainer_word2vec.explain_instance(X_test_instance, c_word2vec.predict_proba, num_features=5)
+        exp_word2vec.save_to_file(filename)
