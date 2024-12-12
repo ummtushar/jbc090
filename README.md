@@ -1,4 +1,4 @@
-# Project Title
+# De-biasing Text to improve the way we perform Stylometry
 
 ## Overview
 
