@@ -1,8 +1,9 @@
-# Project Title
+# Codebase for the course: JBC090- Language and AI
+### *"Do automated de-biasing techniques like Scrubber combined with manual techniques like gender swapping in order to mitigate self-reported flairs in Reddit posts to improve NLP’s performance while ensuring protection of atttributes of users from adverserial attacks on privacy?"*
 
 ## Overview
 
-This project is designed to analyze and process text data, focusing on gender-related content. It includes functionalities for data loading, cleaning, and applying machine learning models to classify text based on gender. The project utilizes various libraries such as Pandas, Scikit-learn, and SpaCy for data manipulation and natural language processing.
+This project is designed to analyze and process text data, focusing on gender-related content. It includes functionalities for data loading, cleaning, and applying machine learning models to classify text based on gender. The project utilizes various libraries such as Pandas, Scikit-learn, gensim and SpaCy for data manipulation and natural language processing.
 
 ## Table of Contents
 
@@ -19,7 +20,7 @@ This project is designed to analyze and process text data, focusing on gender-re
 - Load and preprocess text data from CSV files.
 - Clean text data using SpaCy and scrubadub for sensitive information.
 - Gender swapping functionality to analyze gender bias in text.
-- Train and evaluate machine learning models (Logistic Regression, SVM, KNN) for gender classification.
+- Train and evaluate machine learning models (Logistic Regression) for gender classification.
 - Use of LIME for model interpretability.
 - Support for Word2Vec embeddings for enhanced text representation.
 
