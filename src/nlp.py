@@ -69,7 +69,7 @@ class TfidfLogisticRegression:
 
         # Example usage of explain_instance for the first test instance
         X_test_instance = X_test.iloc[0]  # Change index as needed
-        filename = "lime_explanation.html" 
+        filename = "lime_explanation_orignal.html" 
         c = make_pipeline(self.tfidf, self.model)
         explainer = LimeTextExplainer(class_names=['male', 'female'])
         exp = explainer.explain_instance(X_test_instance, c.predict_proba, num_features=5)
@@ -158,7 +158,7 @@ class Word2VecLogisticRegression:
         # Merged explain_instance logic
         # Example usage of explain_instance for the first test instance
         X_test_instance = X_test.iloc[0]  # Change index as needed
-        filename = "lime_explanation_word2vec.html"  
+        filename = "lime_explanation_word2vec_orignal.html"  
         c_word2vec = make_pipeline(Word2VecTransformer(self.word2vec_model), self.lr_word2vec)
         explainer_word2vec = LimeTextExplainer(class_names=['male', 'female'])
         exp_word2vec = explainer_word2vec.explain_instance(X_test_instance, c_word2vec.predict_proba, num_features=5)
