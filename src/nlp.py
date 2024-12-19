@@ -13,6 +13,8 @@ from gensim.models import Word2Vec
 import numpy as np
 from sklearn.base import BaseEstimator, TransformerMixin
 import matplotlib.pyplot as plt
+from gensim.utils import simple_preprocess
+
 
 class TfidfLogisticRegression:
     def __init__(self, data):
@@ -75,54 +77,95 @@ class TfidfLogisticRegression:
         exp = explainer.explain_instance(X_test_instance, c.predict_proba, num_features=5)
         exp.save_to_file(filename)
 
+    def test(self):
+            test_cases_data = {
+                            "input": [
+                                "I stand before you today, humbled by the task before us, grateful for the trust you have bestowed, mindful of the sacrifices borne by our ancestors.",
+                                "We realize the importance of our voices only when we are silenced. We must raise our voices and speak out against injustice.",
+                                "There is no limit to what we, as women, can accomplish. We must believe in ourselves and our capabilities.",
+                                "The future belongs to those who believe in the beauty of their dreams. We must not only dream but also act.",
+                                "I have learned that as long as I hold fast to my beliefs and values, I will be able to overcome any obstacle.",
+                                "In the face of adversity, we must not lose hope. Together, we can create a world where equality and justice prevail.",
+                                "We cannot all succeed when half of us are held back. It is time to lift each other up and strive for equality.",
+                                "I am not afraid to stand up for what I believe in. My voice is my power, and I will use it to inspire change.",
+                                "The most common way people give up their power is by thinking they don’t have any. We must reclaim our power.",
+                                "Let us not seek to satisfy our thirst for freedom by drinking from the cup of bitterness and hatred.",
+                                "Ask not what your country can do for you – ask what you can do for your country.",
+                                "The only thing we have to fear is fear itself.",
+                                "Injustice anywhere is a threat to justice everywhere.",
+                                "I have a dream that one day this nation will rise up and live out the true meaning of its creed.",
+                                "Success is not final, failure is not fatal: It is the courage to continue that counts."
+                            ],
+                            "expected_output": [
+                                1,  # Michelle Obama
+                                1,  # Malala Yousafzai
+                                1,  # Michelle Obama
+                                1,  # Eleanor Roosevelt
+                                1,  # Oprah Winfrey
+                                1,  # Kamala Harris
+                                1,  # Malala Yousafzai
+                                1,  # Greta Thunberg
+                                1,  # Alice Walker
+                                1,  # Martin Luther King Jr. (included for contrast)
+                                0,    # John F. Kennedy
+                                0,    # Franklin D. Roosevelt
+                                0,    # Martin Luther King Jr.
+                                0,    # Martin Luther King Jr.
+                                0     # Winston Churchill
+                            ]
+                        }
+            test_cases_df = pd.DataFrame(test_cases_data)
+            X = test_cases_df['input']
+            X = self.tfidf.transform(X)
+            y = test_cases_df['expected_output']
+            
+            results = self.model.predict(X)
+            correct_predictions = sum(results == y)
+            total_predictions = len(y)
+            accuracy_ratio = correct_predictions / total_predictions
+            print(f"Accuracy Ratio: {accuracy_ratio:.2f}")
+
+
 
 class Word2VecTransformer(BaseEstimator, TransformerMixin):
-    def __init__(self, model):
-        self.model = model  
+    def __init__(self):
+        self.w2v = None
 
     def fit(self, X, y=None):
+        self.w2v = Word2Vec([simple_preprocess(doc) for doc in X])
         return self
-    
-    def get_word2vec_embeddings(self, text):
-        words = text.split()
-        embeddings = [self.model.wv[word] for word in words if word in self.model.wv]  
-        if len(embeddings) == 0:
-            return np.zeros(self.model.vector_size) 
-        return np.mean(embeddings, axis=0)
 
     def transform(self, X):
-        return np.array([self.get_word2vec_embeddings(post) for post in X])
-    
+        vec_X = []
+        for doc in X:
+            vec = []
+            for token in simple_preprocess(doc):
+                try:
+                    vec.append(self.w2v.wv[token])
+                except KeyError:
+                    pass
+            if not vec:
+                vec.append(self.w2v.wv['the'])  
+            vec_X.append(np.mean(vec, axis=0))  # return the document as one vector
+        return np.array(vec_X)
 
 class Word2VecLogisticRegression:
     def __init__(self, data):
         self.data = data
-        self.word2vec_model = None
+        self.word2vec_model = Word2VecTransformer() 
         self.lr_word2vec = LogisticRegression(n_jobs=-1)
         self.X_test_word2vec = None
         self.y_train = None
         self.y_test = None
 
-    def train_word2vec(self, X_train):
-        posts = [post.split() for post in X_train]
-        self.word2vec_model = Word2Vec(posts)
-
-    def get_word2vec_embeddings(self, text):
-        words = text.split()
-        embeddings = [self.word2vec_model.wv[word] for word in words if word in self.word2vec_model.wv]
-        if len(embeddings) == 0:
-            return np.zeros(self.word2vec_model.vector_size)
-        return np.mean(embeddings, axis=0)
-
     def run(self):
         X, y = DataLoader.split(self.data)
         X_train, X_test, self.y_train, self.y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-        self.train_word2vec(X_train)
-
-        # We create a word2vec embedding of |V| x d=100 (default)
-        X_train_word2vec = np.array([self.get_word2vec_embeddings(post) for post in X_train])
-        self.X_test_word2vec = np.array([self.get_word2vec_embeddings(post) for post in X_test])
+        self.word2vec_model.fit(X_train)  
+        X_train_word2vec = self.word2vec_model.transform(X_train)  # Transform training data
+        self.X_test_word2vec = self.word2vec_model.transform(X_test)  # Transform test data
+   
 
         start_time = time.time()
         with tqdm(total=1, desc="Fitting model with Word2Vec") as pbar:
@@ -143,8 +186,15 @@ class Word2VecLogisticRegression:
         y_train_proba = self.lr_word2vec.predict_proba(X_train_word2vec)[:, 1]
         y_test_proba = self.lr_word2vec.predict_proba(self.X_test_word2vec)[:, 1]
 
+        train_auc = roc_auc_score(self.y_train, y_train_proba)
+        test_auc = roc_auc_score(self.y_test, y_test_proba)
+
+        print(f"Train AUC: {train_auc:.2f}")
+        print(f"Test AUC: {test_auc:.2f}")
+
         fpr_train, tpr_train, _ = roc_curve(self.y_train, y_train_proba)
         fpr_test, tpr_test, _ = roc_curve(self.y_test, y_test_proba)
+
 
         plt.figure()
         plt.plot(fpr_train, tpr_train, label='Train AUC')
@@ -155,11 +205,59 @@ class Word2VecLogisticRegression:
         plt.legend(loc='best')
         plt.show()
 
-        # Merged explain_instance logic
-        # Example usage of explain_instance for the first test instance
         X_test_instance = X_test.iloc[0]  # Change index as needed
         filename = "lime_explanation_word2vec_orignal.html"  
-        c_word2vec = make_pipeline(Word2VecTransformer(self.word2vec_model), self.lr_word2vec)
+        c_word2vec = make_pipeline(self.word2vec_model, self.lr_word2vec)
         explainer_word2vec = LimeTextExplainer(class_names=['male', 'female'])
         exp_word2vec = explainer_word2vec.explain_instance(X_test_instance, c_word2vec.predict_proba, num_features=5)
         exp_word2vec.save_to_file(filename)
+
+    def test(self):
+        test_cases_data = {
+                        "input": [
+                            "I stand before you today, humbled by the task before us, grateful for the trust you have bestowed, mindful of the sacrifices borne by our ancestors.",
+                            "We realize the importance of our voices only when we are silenced. We must raise our voices and speak out against injustice.",
+                            "There is no limit to what we, as women, can accomplish. We must believe in ourselves and our capabilities.",
+                            "The future belongs to those who believe in the beauty of their dreams. We must not only dream but also act.",
+                            "I have learned that as long as I hold fast to my beliefs and values, I will be able to overcome any obstacle.",
+                            "In the face of adversity, we must not lose hope. Together, we can create a world where equality and justice prevail.",
+                            "We cannot all succeed when half of us are held back. It is time to lift each other up and strive for equality.",
+                            "I am not afraid to stand up for what I believe in. My voice is my power, and I will use it to inspire change.",
+                            "The most common way people give up their power is by thinking they don’t have any. We must reclaim our power.",
+                            "Let us not seek to satisfy our thirst for freedom by drinking from the cup of bitterness and hatred.",
+                            "Ask not what your country can do for you – ask what you can do for your country.",
+                            "The only thing we have to fear is fear itself.",
+                            "Injustice anywhere is a threat to justice everywhere.",
+                            "I have a dream that one day this nation will rise up and live out the true meaning of its creed.",
+                            "Success is not final, failure is not fatal: It is the courage to continue that counts."
+                        ],
+                        "expected_output": [
+                            1,  # Michelle Obama
+                            1,  # Malala Yousafzai
+                            1,  # Michelle Obama
+                            1,  # Eleanor Roosevelt
+                            1,  # Oprah Winfrey
+                            1,  # Kamala Harris
+                            1,  # Malala Yousafzai
+                            1,  # Greta Thunberg
+                            1,  # Alice Walker
+                            1,  # Martin Luther King Jr. (included for contrast)
+                            0,    # John F. Kennedy
+                            0,    # Franklin D. Roosevelt
+                            0,    # Martin Luther King Jr.
+                            0,    # Martin Luther King Jr.
+                            0     # Winston Churchill
+                        ]
+                    }
+        test_cases_df = pd.DataFrame(test_cases_data)
+        X = test_cases_df['input']
+        X = self.word2vec_model.transform(X)
+        y = test_cases_df['expected_output']
+        
+        results = self.lr_word2vec.predict(X)
+        correct_predictions = sum(results == y)
+        total_predictions = len(y)
+        accuracy_ratio = correct_predictions / total_predictions
+        print(f"Accuracy Ratio: {accuracy_ratio:.2f}")
+
+        
