@@ -118,32 +118,41 @@ This section provides guidance on how to modify various elements of the experime
   ```
 
 - **Data Cleaning**: Adjust the cleaning process by modifying the `scrubber` and `gender_swap` methods:
-  - **Scrubber**: Modify the cleaning logic in `src/datacleaner.py`:
+  - **Scrubber**: Modify the cleaning model in `src/datacleaner.py`:
   ```python:src/dataclearner.py
-  def scrubber(df):
-      scrubber = scrubadub.Scrubber()
-      
-      # Add or modify detectors here
-      scrubber.add_detector(scrubadub_spacy.detectors.SpacyEntityDetector(model="en_core_web_sm"))
+  def scrubber(self, df):
+        nlp = spacy.load("en_core_web_sm")
+        scrubber = scrubadub.Scrubber()
+        
+        # Add the SpacyEntityDetector with the changed model
+        scrubber.add_detector(scrubadub_spacy.detectors.SpacyEntityDetector(model="en_core_web_sm"))
 
-      for index, row in df.iterrows():
-          text = row['post']
-          result = scrubber.clean(text)
-          df.at[index, 'post'] = result
-
-      return df
+        for index, row in self.df.iterrows():
+            text = row['post']
+            result = scrubber.clean(text)
+            self.df.at[index, 'post'] = result
   ```
 
-  - **Gender Swapping**: Change the gender swapping logic in `src/dataclearner.py`:
+  - **Gender Swapping**: Change the gender swapping logic in the dictionary in  `src/dataclearner.py`:
   ```python:src/dataclearner.py
-  def gender_swap(df):
-      # Add or modify gender swapping rules here
-      male_to_female = {
-          'he': 'she',
-          'him': 'her',
-          # Add more mappings
-      }
-      female_to_male = {v: k for k, v in male_to_female.items()}
+  def gender_swap(self, df):
+        def change_gender(string):
+            # Change the logic in the dictionary below
+            dictionary = {
+                "batman": "batwoman", "batwoman": "batman",
+                "boy": "girl", "girl": "boy",
+                "boyfriend": "girlfriend", "girlfriend": "boyfriend",
+                "father": "mother", "mother": "father",
+                "husband": "wife", "wife": "husband",
+                "he": "she", "she": "he",
+                "his": "her", "her": "his",
+                "male": "female", "female": "male",
+                "man": "woman", "woman": "man",
+                "Mr": "Ms", "Ms": "Mr",
+                "sir": "madam", "madam": "sir",
+                "son": "daughter", "daughter": "son",
+                "uncle": "aunt", "aunt": "uncle",
+            }
   ```
 
 ### Model Training and Evaluation
@@ -192,17 +201,27 @@ This section provides guidance on how to modify various elements of the experime
   ```python:src/nlp.py
   def test(self):
       # Add or modify test cases
-      test_texts = [
+      test_cases_data = {
+          "input": [
           "Example text 1",
           "Example text 2"
-      ]
-      # Modify test parameters
-      explainer = LimeTextExplainer(class_names=['male', 'female'])
-      exp = explainer.explain_instance(
-          test_texts[0], 
-          self.predict_proba,
-          num_features=10
-      )
+            ],
+      expected_output = {
+        "input": [
+        "1",
+        "0"
+          ],
+      }
+      test_cases_df = pd.DataFrame(test_cases_data)
+      X = test_cases_df['input']
+      X = self.tfidf.transform(X)
+      y = test_cases_df['expected_output']
+      
+      results = self.model.predict(X)
+      correct_predictions = sum(results == y)
+      total_predictions = len(y)
+      accuracy_ratio = correct_predictions / total_predictions
+      print(f"Accuracy Ratio: {accuracy_ratio:.2f}")
   ```
 
 ### Additional Configurations
