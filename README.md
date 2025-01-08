@@ -61,7 +61,7 @@ To set up the project, follow these steps:
    pip install -r requirements.txt
    ```
 
-   The `requirements.txt` file consist of the following:
+   The `requirements.txt` file consist of the following (main and important) libraries:
    ```
    gensim==4.3.3
    lime==0.2.0.1
