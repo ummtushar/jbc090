@@ -21,15 +21,15 @@ This project is designed to analyze and process text data, focusing on gender-re
 
 ## Table of Contents
 
-- [✅ Tl;dr](https://github.com/ummtushar/jbc090#tl-dr)
-- [🧭 Installation](https://github.com/ummtushar/jbc090#installation)
-- [♻️ Reproduction](https://github.com/ummtushar/jbc090#reproduction)
-- [🔋 Resources](https://github.com/ummtushar/jbc090#resources)
-- [📈 Data](https://github.com/ummtushar/jbc090#data)
-- [🤖 Models](https://github.com/ummtushar/jbc090#models)
-- [🧪 Experimental Manipulation](https://github.com/ummtushar/jbc090#experimental-manipulation)
-- [🪪 License](https://github.com/ummtushar/jbc090#license)
-- [📞 Contact](https://github.com/ummtushar/jbc090#contact)
+- [✅ Tl;dr](https://github.com/ummtushar/jbc090#-tl-dr)
+- [🧭 Installation](https://github.com/ummtushar/jbc090#-installation)
+- [♻️ Reproduction](https://github.com/ummtushar/jbc090#-reproduction)
+- [🔋 Resources](https://github.com/ummtushar/jbc090#-resources)
+- [📈 Data](https://github.com/ummtushar/jbc090#-data)
+- [🤖 Models](https://github.com/ummtushar/jbc090#-models)
+- [🧪 Experimental Manipulation](https://github.com/ummtushar/jbc090#-experimental-manipulation)
+- [🪪 License](https://github.com/ummtushar/jbc090#-license)
+- [📞 Contact](https://github.com/ummtushar/jbc090#-contact)
 
 ## ✅ Tl;dr
 
