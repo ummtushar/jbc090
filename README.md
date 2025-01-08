@@ -111,39 +111,110 @@ This section provides guidance on how to modify various elements of the experime
 
 ### Data Loading and Cleaning
 
-- **Data Source**: You can change the data source by modifying the file path in the `DataLoader` class.
-  - **File Path**: Update the path in `src/main.py` to load a different dataset.
-   
+- **Data Source**: You can change the data source by modifying the file path in the `DataLoader` class in `src/main.py`:
+  ```python:src/main.py
+  # Change the input file path here
+  df_gender = DataLoader("./data/gender.csv").load_data()
+  ```
 
-- **Data Cleaning**: Adjust the cleaning process by modifying the `scrubber` and `gender_swap` methods in the `DataCleaner` class.
-  - **Scrubber**: Modify the cleaning logic in `notebooks/eda.ipynb`.
+- **Data Cleaning**: Adjust the cleaning process by modifying the `scrubber` and `gender_swap` methods:
+  - **Scrubber**: Modify the cleaning logic in `src/datacleaner.py`:
+  ```python:src/dataclearner.py
+  def scrubber(df):
+      scrubber = scrubadub.Scrubber()
+      
+      # Add or modify detectors here
+      scrubber.add_detector(scrubadub_spacy.detectors.SpacyEntityDetector(model="en_core_web_sm"))
 
+      for index, row in df.iterrows():
+          text = row['post']
+          result = scrubber.clean(text)
+          df.at[index, 'post'] = result
 
-  - **Gender Swapping**: Change the gender swapping logic in `notebooks/eda.ipynb`.
+      return df
+  ```
 
+  - **Gender Swapping**: Change the gender swapping logic in `src/dataclearner.py`:
+  ```python:src/dataclearner.py
+  def gender_swap(df):
+      # Add or modify gender swapping rules here
+      male_to_female = {
+          'he': 'she',
+          'him': 'her',
+          # Add more mappings
+      }
+      female_to_male = {v: k for k, v in male_to_female.items()}
+  ```
 
 ### Model Training and Evaluation
 
-- **Model Parameters**: You can adjust the parameters of the logistic regression models in the `TfidfLogisticRegression` and `Word2VecLogisticRegression` classes.
-  - **TF-IDF Model**: Modify parameters in `src/nlp.py`.
-  
+- **Model Parameters**: You can adjust the parameters of the logistic regression models:
+  - **TF-IDF Model**: Modify parameters in `src/nlp.py`:
+  ```python:src/nlp.py
+  class TfidfLogisticRegression:
+      def __init__(self):
+          # Modify TF-IDF parameters
+          self.vectorizer = TfidfVectorizer(
+              max_features=5000,
+              min_df=5,
+              max_df=0.7
+          )
+          # Modify LogisticRegression parameters
+          self.model = LogisticRegression(
+              C=1.0,
+              max_iter=100,
+              random_state=42
+          )
+  ```
 
-  - **Word2Vec Model**: Adjust the Word2Vec training settings in `src/nlp.py`.
- 
+  - **Word2Vec Model**: Adjust the Word2Vec training settings in `src/nlp.py`:
+  ```python:src/nlp.py
+  class Word2VecLogisticRegression:
+      def __init__(self):
+          # Modify Word2Vec parameters
+          self.w2v_model = Word2Vec(
+              vector_size=100,
+              window=5,
+              min_count=1,
+              workers=4
+          )
+          # Modify LogisticRegression parameters
+          self.model = LogisticRegression(
+              C=1.0,
+              max_iter=100,
+              random_state=42
+          )
+  ```
 
 ### Testing and Validation
 
-- **Test Cases**: You can change the test cases to evaluate different inputs by modifying the `test` method in the `TfidfLogisticRegression` and `Word2VecLogisticRegression` classes.
-  - **Test Inputs**: Update the test cases in `src/nlp.py`.
-
+- **Test Cases**: You can modify the test method to evaluate different inputs in `src/nlp.py`:
+  ```python:src/nlp.py
+  def test(self):
+      # Add or modify test cases
+      test_texts = [
+          "Example text 1",
+          "Example text 2"
+      ]
+      # Modify test parameters
+      explainer = LimeTextExplainer(class_names=['male', 'female'])
+      exp = explainer.explain_instance(
+          test_texts[0], 
+          self.predict_proba,
+          num_features=10
+      )
+  ```
 
 ### Additional Configurations
 
-- **Scrubber and SpaCy Model**: Ensure the correct SpaCy model is downloaded and used for text processing.
-  - **SpaCy Model**: Download the necessary model in `notebooks/eda.ipynb`.
+- **Scrubber and SpaCy Model**: Ensure the correct SpaCy model is downloaded:
+  ```python:src/nlp.py
+  # Download and configure SpaCy model
+  !python -m spacy download en_core_web_sm
+  nlp = spacy.load("en_core_web_sm")
+  ```
 
-
-By following these guidelines, you can effectively manipulate the experimental setup to explore different scenarios and outcomes. Adjust the parameters and logic as needed to suit your research or project goals.
+By following these guidelines and modifying the code snippets shown above, you can effectively manipulate the experimental setup to explore different scenarios and outcomes. Adjust the parameters and logic as needed to suit your research or project goals.
 
 
 ## 🪪 License
