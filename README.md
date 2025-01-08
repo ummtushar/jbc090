@@ -154,7 +154,7 @@ This project is licensed under the Apache License 2.0. See the [LICENSE](LICENSE
 
 For any inquiries, please contact:
 
-- Your Name - [Tushar Gupta](mailto:t.gupta@student.tue.nl), [Polina Stepanova](mailto:p.stepanova@student.tue.nl), [Noa Verrijt](mailto:n.f.verrijt@student.tue.nl), [Jasmijn Verhaegh](mailto:j.m.verhaegh@student.tue.nl)
+- Group - [Tushar Gupta](mailto:t.gupta@student.tue.nl), [Polina Stepanova](mailto:p.stepanova@student.tue.nl), [Noa Verrijt](mailto:n.f.verrijt@student.tue.nl), [Jasmijn Verhaegh](mailto:j.m.verhaegh@student.tue.nl)
 
 ---
 
