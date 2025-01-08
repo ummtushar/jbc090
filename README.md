@@ -61,9 +61,15 @@ To set up the project, follow these steps:
    pip install -r requirements.txt
    ```
 
-   Alternatively, you can install only the packages that are directly imported in your `src/nlp.py` file:
-   ```bash
-   pip install gensim==4.3.3 lime==0.2.0.1 matplotlib==3.9.2 numpy==1.26.4 pandas==2.2.3 scikit-learn==1.5.2 tqdm==4.67.0
+   The `requirements.txt` file consist of the following:
+   ```
+   gensim==4.3.3
+   lime==0.2.0.1
+   matplotlib==3.9.2
+   numpy==1.26.4
+   pandas==2.2.3
+   scikit-learn==1.5.2
+   tqdm==4.67.0
    ```
 
 4. Download the necessary SpaCy model:
