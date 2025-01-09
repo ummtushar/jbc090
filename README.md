@@ -1,5 +1,5 @@
-# 🚀 Codebase for the course: JBC090- Language and AI
-### *Impact of Scrubber and Gender Swapping on predictions of NLP models*
+# 🚀 Codebase for **"Impact of Scrubber and Gender Swapping on predictions of NLP models"**
+### *JBC090: Language and AI*
 
 This repository is for the experiments described in ["Impact of Scrubber and Gender Swapping on predictions of NLP models"](https://plum-roxie-42.tiiny.site). If you use anything related to the repository or paper, please cite the following work:
 
@@ -23,7 +23,7 @@ This project is designed to analyze and process text data, focusing on gender-re
 
 - [✅ Tl;dr](https://github.com/ummtushar/jbc090#-tl-dr)
 - [🧭 Installation](https://github.com/ummtushar/jbc090#-installation)
-- [♻️ Reproduction](https://github.com/ummtushar/jbc090#-reproduction)
+- [🔃 Reproduction](https://github.com/ummtushar/jbc090#-reproduction)
 - [🔋 Resources](https://github.com/ummtushar/jbc090#-resources)
 - [📈 Data](https://github.com/ummtushar/jbc090#-data)
 - [🤖 Models](https://github.com/ummtushar/jbc090#-models)
@@ -77,7 +77,7 @@ To set up the project, follow these steps:
    python -m spacy download en_core_web_sm
    ```
 
-## ♻️ Reproduction
+## 🔃 Reproduction
 
 To run the project, you can execute the main script. Here’s how to do it:
 
@@ -93,6 +93,8 @@ To run the project, you can execute the main script. Here’s how to do it:
 ## 🔋 Resources
 
 We used a MacBook with an Apple Silicon M2 Pro chip to run the logistic regression models with TF-IDF and Word2Vec embeddings. Loading and cleaning the data takes approximately 30 minutes. However, the Scrubber took a little over 12 hours to run. The TfidfLogisticRegression model trains in a few minutes, while the Word2VecLogisticRegression model takes about 30 minutes to an hour, depending on dataset size or split size (In our case, it was a 80/20 split). The entire process, including data handling and model training, completes in 14-15 hours. Approximately 16GB of RAM is recommended to handle data processing and embeddings efficiently.
+
+On using [Deloitte's Emission Calculator](https://www.deloitte.com/uk/en/services/consulting/content/ai-carbon-footprint-calculator.html), the CO2 emissions were calculated to be a score of 5 between a scale of 1 to 10 indicating that there was a relatively medium emissions compared to other ML tasks requiring similar compute. The results can found [here](https://i.postimg.cc/Qtb841yQ/Screenshot-2025-01-09-at-13-06-40.png).
 
 ## 📈 Data
 

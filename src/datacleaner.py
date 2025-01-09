@@ -3,10 +3,27 @@ import scrubadub_spacy, scrubadub
 import spacy
 
 class DataCleaner:
+    """A class for cleaning and processing text data in a DataFrame.
+    
+    This class provides methods to scrub sensitive information from text
+    and to swap gendered terms within the text.
+    
+    Attributes:
+        df (pd.DataFrame): Input DataFrame containing text data to be cleaned.
+    """
+
     def __init__(self, df: pd.DataFrame):
         self.df = df
 
     def scrubber(self, df):
+        """Cleans the text data in the DataFrame by removing sensitive information.
+        
+        This method uses the scrubadub library along with a spaCy model to detect
+        and remove sensitive entities from the 'post' column of the DataFrame.
+        
+        Returns:
+            pd.DataFrame: The cleaned DataFrame with sensitive information scrubbed.
+        """
         nlp = spacy.load("en_core_web_sm")
         scrubber = scrubadub.Scrubber()
         
@@ -21,7 +38,23 @@ class DataCleaner:
         return self.df
     
     def gender_swap(self, df):
+        """Swaps gendered terms in the text data within the DataFrame.
+        
+        This method replaces male terms with female counterparts and vice versa
+        in the 'post' column of the DataFrame.
+        
+        Returns:
+            pd.DataFrame: The DataFrame with gendered terms swapped.
+        """
         def change_gender(string):
+            """Replaces gendered words in the input string based on a predefined dictionary.
+            
+            Args:
+                string (str): The input string to process.
+                
+            Returns:
+                str: The modified string with gendered terms swapped.
+            """
             # A Dictionary to store the mapping of genders
             # The user can add his words too.
             dictionary = {
