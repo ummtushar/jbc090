@@ -96,8 +96,14 @@ class DataCleaner:
         
             return ans
 
+        new_rows = []
         for index, row in self.df.iterrows():
-            self.df.at[index, 'post'] = change_gender(row['post'])
+            modified_post = change_gender(row['post'])
+            modified_label = row['female']
+            new_rows.append({'post': modified_post, 'female': modified_label})
+        
+        new_df = pd.DataFrame(new_rows)
+        self.df = pd.concat([new_df, self.df], ignore_index=True)
 
         return self.df
 
