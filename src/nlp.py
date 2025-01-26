@@ -134,7 +134,7 @@ class TfidfLogisticRegression:
                 1,  # Malala Yousafzai
                 1,  # Greta Thunberg
                 1,  # Alice Walker
-                1,  # Martin Luther King Jr. (included for contrast)
+                0,  # Martin Luther King Jr. 
                 0,    # John F. Kennedy
                 0,    # Franklin D. Roosevelt
                 0,    # Martin Luther King Jr.
@@ -319,7 +319,7 @@ class Word2VecLogisticRegression:
                             1,  # Malala Yousafzai
                             1,  # Greta Thunberg
                             1,  # Alice Walker
-                            1,  # Martin Luther King Jr. (included for contrast)
+                            0,  # Martin Luther King Jr. 
                             0,    # John F. Kennedy
                             0,    # Franklin D. Roosevelt
                             0,    # Martin Luther King Jr.
